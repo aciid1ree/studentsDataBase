@@ -1,4 +1,11 @@
-tasks.json
-info.plist
+# Скомпилированные бинарники
 main
-main.yaml
+*.o
+*.out
+*.exe
+
+# Локальные настройки редактора
+tasks.json
+
+# MacOS системные файлы
+.DS_Store
