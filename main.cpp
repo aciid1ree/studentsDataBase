@@ -54,6 +54,16 @@ void deleteStudentByName(std::vector<Student>& database, const std::string& name
         database.end());
 }
 
+Student* getStudentByName(std::vector<Student>& database, const std::string& name) {
+    auto it = std::find_if(database.begin(), database.end(),
+                           [&](const Student& s) { return s.name == name; });
+
+    if (it != database.end()) {
+        return &(*it); // возвращаем указатель на найденного студента
+    }
+    return nullptr; // если не найден
+}
+
 
 int main() {
     std::vector<Student> database;
@@ -66,6 +76,7 @@ int main() {
         std::cout << "2. Вывести список студентов\n";
         std::cout << "3. Вывести последнего добавленного студента\n";
         std::cout << "4. Удалить студента\n";
+        std::cout << "5. Найти студента по имени\n";
         std::cout << "0. Выход\n";
         std::cout << "Выберите действие: ";
         std::cin >> choice;
@@ -83,7 +94,17 @@ int main() {
             case 4:
                 std::cout << "Введите имя: ";
                 std::cin >> name;
-                deleteStudentByName(database, name); 
+                auto student = getStudentByName(database, name); 
+                if (student) {
+                    std::cout << "Нашли студента: " << student->name << std::endl;
+                } else {
+                    std::cout << "Студент не найден" << std::endl;
+                }
+                break;
+            case 5:
+                std::cout << "Введите имя: ";
+                std::cin >> name;
+                getStudentByName(database, name); 
                 break;
             case 0:
                 std::cout << "Выход из программы.\n";
