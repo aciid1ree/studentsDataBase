@@ -46,15 +46,26 @@ void displayLatestStudent(const std::vector<Student>& database) {
     std::cout << "Средний балл: " << lastStudent.gpa << "\n\n";
 }
 
+
+void deleteStudentByName(std::vector<Student>& database, const std::string& name) {
+    database.erase(
+        std::remove_if(database.begin(), database.end(),
+                       [&](const Student& s) { return s.name == name; }),
+        database.end());
+}
+
+
 int main() {
     std::vector<Student> database;
 
     int choice;
+    std::string name;
     do {
         std::cout << "Меню:\n";
         std::cout << "1. Добавить студента\n";
         std::cout << "2. Вывести список студентов\n";
         std::cout << "3. Вывести последнего добавленного студента\n";
+        std::cout << "4. Удалить студента\n";
         std::cout << "0. Выход\n";
         std::cout << "Выберите действие: ";
         std::cin >> choice;
@@ -68,6 +79,11 @@ int main() {
                 break;
             case 3:
                 displayLatestStudent(database);
+                break;
+            case 4:
+                std::cout << "Введите имя: ";
+                std::cin >> name;
+                deleteStudentByName(database, name); 
                 break;
             case 0:
                 std::cout << "Выход из программы.\n";
