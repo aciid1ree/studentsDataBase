@@ -36,6 +36,16 @@ void displayStudents(const std::vector<Student>& database) {
     }
 }
 
+void displayLatestStudent(const std::vector<Student>& database) {
+    std::cout << "Последний студент:\n";
+    Student lastStudent = database.back();
+    std::cout << "Имя: " << lastStudent.name << "\n";
+    std::cout << "Имя: " << lastStudent.name << "\n";
+    std::cout << "Возраст: " << lastStudent.age << "\n";
+    std::cout << "Специальность: " << lastStudent.major << "\n";
+    std::cout << "Средний балл: " << lastStudent.gpa << "\n\n";
+}
+
 int main() {
     std::vector<Student> database;
 
@@ -44,6 +54,7 @@ int main() {
         std::cout << "Меню:\n";
         std::cout << "1. Добавить студента\n";
         std::cout << "2. Вывести список студентов\n";
+        std::cout << "3. Вывести последнего добавленного студента\n";
         std::cout << "0. Выход\n";
         std::cout << "Выберите действие: ";
         std::cin >> choice;
@@ -55,6 +66,9 @@ int main() {
             case 2:
                 displayStudents(database);
                 break;
+            case 3:
+                displayLatestStudent(database);
+                break;
             case 0:
                 std::cout << "Выход из программы.\n";
                 break;
@@ -65,3 +79,4 @@ int main() {
 
     return 0;
 }
+
