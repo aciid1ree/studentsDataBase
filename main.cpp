@@ -78,6 +78,20 @@ TEST_F(StudentDatabaseTest, AddStudent) {
     EXPECT_DOUBLE_EQ(db.back().gpa, 4.9);
 }
 
+TEST_F(StudentDatabaseTest, displayLatestStudent) {
+    std::stringstream buffer;
+    std::streambuf* oldCout = std::cout.rdbuf(buffer.rdbuf());
+
+    displayLatestStudent(db);
+    std::cout.rdbuf(oldCout);
+
+    std::string output = buffer.str();
+    EXPECT_NE(output.find("Петр"), std::string::npos);
+    EXPECT_NE(output.find("19"), std::string::npos);
+    EXPECT_NE(output.find("Физика"), std::string::npos);
+    EXPECT_NE(output.find("4.2"), std::string::npos);
+}
+
 int main() {
     std::vector<Student> database;
 
@@ -138,6 +152,7 @@ int main() {
         }
     } while (choice != 0);
 
-    return 0;
+    ::testing::InitGoogleTest();
+   return RUN_ALL_TESTS();
 }
 
