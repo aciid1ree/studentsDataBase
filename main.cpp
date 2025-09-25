@@ -1,122 +1,12 @@
 #include <iostream>
 #include <vector>
-#include <string>
-#include "gtest/gtest.h"
-#include <gmock/gmock.h>
-
-struct Student {
-    std::string name;
-    int age;
-    std::string major;
-    double gpa;
-};
-
-// Функция для добавления студента в базу данных
-void addStudent(std::vector<Student>& database, Student& student) {
-    database.push_back(student);
-    std::cout << "Студент добавлен в базу данных.\n";
-}
-
-// Функция для вывода всех студентов из базы данных
-void displayStudents(const std::vector<Student>& database) {
-    std::cout << "Список студентов:\n";
-    for (const Student& student : database) {
-        std::cout << "Имя: " << student.name << "\n";
-        std::cout << "Возраст: " << student.age << "\n";
-        std::cout << "Специальность: " << student.major << "\n";
-        std::cout << "Средний балл: " << student.gpa << "\n\n";
-    }
-}
-
-void displayLatestStudent(const std::vector<Student>& database) {
-    std::cout << "Последний студент:\n";
-    Student lastStudent = database.back();
-    std::cout << "Имя: " << lastStudent.name << "\n";
-    std::cout << "Имя: " << lastStudent.name << "\n";
-    std::cout << "Возраст: " << lastStudent.age << "\n";
-    std::cout << "Специальность: " << lastStudent.major << "\n";
-    std::cout << "Средний балл: " << lastStudent.gpa << "\n\n";
-}
-
-
-void deleteStudentByName(std::vector<Student>& database, const std::string& name) {
-    database.erase(
-        std::remove_if(database.begin(), database.end(),
-                       [&](const Student& s) { return s.name == name; }),
-        database.end());
-}
-
-Student* getStudentByName(std::vector<Student>& database, const std::string& name) {
-    auto it = std::find_if(database.begin(), database.end(),
-                           [&](const Student& s) { return s.name == name; });
-
-    if (it != database.end()) {
-        return &(*it); 
-    }
-    return nullptr; 
-}
-
-class StudentDatabaseTest : public ::testing::Test {
-    protected:
-        std::vector<Student> db;
-    
-        void SetUp() override {
-            db = {
-                {"Иван", 20, "Информатика", 4.5},
-                {"Мария", 21, "Математика", 4.7},
-                {"Петр", 19, "Физика", 4.2}
-            };
-        }
-    };
-
-TEST_F(StudentDatabaseTest, AddStudent) {
-    Student newStudent{"Анна", 22, "Биология", 4.9};
-    addStudent(db, newStudent);
-
-    ASSERT_EQ(db.size(), 4);
-    EXPECT_EQ(db.back().name, "Анна");
-    EXPECT_DOUBLE_EQ(db.back().gpa, 4.9);
-}
-
-TEST_F(StudentDatabaseTest, displayLatestStudent) {
-    std::stringstream buffer;
-    std::streambuf* oldCout = std::cout.rdbuf(buffer.rdbuf());
-
-    displayLatestStudent(db);
-    std::cout.rdbuf(oldCout);
-
-    std::string output = buffer.str();
-    EXPECT_NE(output.find("Петр"), std::string::npos);
-    EXPECT_NE(output.find("19"), std::string::npos);
-    EXPECT_NE(output.find("Физика"), std::string::npos);
-    EXPECT_NE(output.find("4.2"), std::string::npos);
-}
-
-TEST_F(StudentDatabaseTest, deleteStudentByName) {
-    Student newStudent{"Анна", 22, "Биология", 4.9};
-    addStudent(db, newStudent);
-
-    deleteStudentByName(db, "Анна");
-
-    Student* found = getStudentByName(db, "Анна");
-    EXPECT_EQ(found, nullptr);
-}
-
-
-TEST_F(StudentDatabaseTest, getStudentByName) {
-    Student newStudent{"Анна", 22, "Биология", 4.9};
-    addStudent(db, newStudent);
-
-    Student* found = getStudentByName(db, "Анна");
-
-    EXPECT_EQ(found->name, "Анна");
-}
+#include "student.h"
 
 int main() {
-    std::vector<Student> database;
-
+    StudentDatabase db;
     int choice;
     std::string name;
+
     do {
         std::cout << "Меню:\n";
         std::cout << "1. Добавить студента\n";
@@ -128,51 +18,41 @@ int main() {
         std::cout << "Выберите действие: ";
         std::cin >> choice;
 
-        switch (choice) {
+        switch(choice) {
             case 1: {
-                Student newStudent;
-                std::cout << "Введите имя студента: ";
-                std::cin >> newStudent.name;
-                std::cout << "Введите возраст студента: ";
-                std::cin >> newStudent.age;
-                std::cout << "Введите специальность студента: ";
-                std::cin >> newStudent.major;
-                std::cout << "Введите средний балл студента: ";
-                std::cin >> newStudent.gpa;
-                addStudent(database, newStudent);
+                Student s;
+                std::cout << "Введите имя: "; std::cin >> s.name;
+                std::cout << "Введите возраст: "; std::cin >> s.age;
+                std::cout << "Введите специальность: "; std::cin >> s.major;
+                std::cout << "Введите GPA: "; std::cin >> s.gpa;
+                db.addStudent(s);
                 break;
             }
-            case 2:
-                displayStudents(database);
-                break;
-            case 3:
-                displayLatestStudent(database);
-                break;
-            case 4:{
-                std::cout << "Введите имя: ";
-                std::cin >> name;
-                auto student = getStudentByName(database, name); 
-                if (student) {
-                    std::cout << "Нашли студента: " << student->name << std::endl;
-                } else {
-                    std::cout << "Студент не найден" << std::endl;
+            case 2: {
+                for (auto& s : db.getAllStudents()) {
+                    std::cout << s.name << " " << s.age << " " << s.major << " " << s.gpa << "\n";
                 }
                 break;
             }
-            case 5:
-                std::cout << "Введите имя: ";
-                std::cin >> name;
-                deleteStudentByName(database, name); 
+            case 3: {
+                const Student* last = db.getLatestStudent();
+                if (last) std::cout << last->name << "\n";
                 break;
-            case 0:
-                std::cout << "Выход из программы.\n";
+            }
+            case 4: {
+                std::cout << "Введите имя: "; std::cin >> name;
+                Student* s = db.getStudentByName(name);
+                if (s) std::cout << s->name << "\n";
+                else std::cout << "Не найден\n";
                 break;
-            default:
-                std::cout << "Неверный выбор. Попробуйте снова.\n";        
+            }
+            case 5: {
+                std::cout << "Введите имя: "; std::cin >> name;
+                db.deleteStudentByName(name);
+                break;
+            }
+            case 0: break;
+            default: std::cout << "Неверный выбор\n";
         }
-    } while (choice != 0);
-
-    ::testing::InitGoogleTest();
-   return RUN_ALL_TESTS();
+    } while(choice != 0);
 }
-
