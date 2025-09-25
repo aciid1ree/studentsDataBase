@@ -103,6 +103,15 @@ TEST_F(StudentDatabaseTest, deleteStudentByName) {
 }
 
 
+TEST_F(StudentDatabaseTest, getStudentByName) {
+    Student newStudent{"Анна", 22, "Биология", 4.9};
+    addStudent(db, newStudent);
+
+    Student* found = getStudentByName(db, "Анна");
+
+    EXPECT_EQ(found->name, "Анна");
+}
+
 int main() {
     std::vector<Student> database;
 
