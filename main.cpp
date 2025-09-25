@@ -1,6 +1,8 @@
 #include <iostream>
 #include <vector>
 #include <string>
+#include "gtest/gtest.h"
+#include <gmock/gmock.h>
 
 struct Student {
     std::string name;
@@ -10,17 +12,7 @@ struct Student {
 };
 
 // Функция для добавления студента в базу данных
-void addStudent(std::vector<Student>& database) {
-    Student student;
-    std::cout << "Введите имя студента: ";
-    std::cin >> student.name;
-    std::cout << "Введите возраст студента: ";
-    std::cin >> student.age;
-    std::cout << "Введите специальность студента: ";
-    std::cin >> student.major;
-    std::cout << "Введите средний балл студента: ";
-    std::cin >> student.gpa;
-
+void addStudent(std::vector<Student>& database, Student& student) {
     database.push_back(student);
     std::cout << "Студент добавлен в базу данных.\n";
 }
@@ -59,11 +51,32 @@ Student* getStudentByName(std::vector<Student>& database, const std::string& nam
                            [&](const Student& s) { return s.name == name; });
 
     if (it != database.end()) {
-        return &(*it); // возвращаем указатель на найденного студента
+        return &(*it); 
     }
-    return nullptr; // если не найден
+    return nullptr; 
 }
 
+class StudentDatabaseTest : public ::testing::Test {
+    protected:
+        std::vector<Student> db;
+    
+        void SetUp() override {
+            db = {
+                {"Иван", 20, "Информатика", 4.5},
+                {"Мария", 21, "Математика", 4.7},
+                {"Петр", 19, "Физика", 4.2}
+            };
+        }
+    };
+
+TEST_F(StudentDatabaseTest, AddStudent) {
+    Student newStudent{"Анна", 22, "Биология", 4.9};
+    addStudent(db, newStudent);
+
+    ASSERT_EQ(db.size(), 4);
+    EXPECT_EQ(db.back().name, "Анна");
+    EXPECT_DOUBLE_EQ(db.back().gpa, 4.9);
+}
 
 int main() {
     std::vector<Student> database;
@@ -75,23 +88,33 @@ int main() {
         std::cout << "1. Добавить студента\n";
         std::cout << "2. Вывести список студентов\n";
         std::cout << "3. Вывести последнего добавленного студента\n";
-        std::cout << "4. Удалить студента\n";
-        std::cout << "5. Найти студента по имени\n";
+        std::cout << "4. Найти студента по имени\n";
+        std::cout << "5. Удалить студента\n";
         std::cout << "0. Выход\n";
         std::cout << "Выберите действие: ";
         std::cin >> choice;
 
         switch (choice) {
-            case 1:
-                addStudent(database);
+            case 1: {
+                Student newStudent;
+                std::cout << "Введите имя студента: ";
+                std::cin >> newStudent.name;
+                std::cout << "Введите возраст студента: ";
+                std::cin >> newStudent.age;
+                std::cout << "Введите специальность студента: ";
+                std::cin >> newStudent.major;
+                std::cout << "Введите средний балл студента: ";
+                std::cin >> newStudent.gpa;
+                addStudent(database, newStudent);
                 break;
+            }
             case 2:
                 displayStudents(database);
                 break;
             case 3:
                 displayLatestStudent(database);
                 break;
-            case 4:
+            case 4:{
                 std::cout << "Введите имя: ";
                 std::cin >> name;
                 auto student = getStudentByName(database, name); 
@@ -101,16 +124,17 @@ int main() {
                     std::cout << "Студент не найден" << std::endl;
                 }
                 break;
+            }
             case 5:
                 std::cout << "Введите имя: ";
                 std::cin >> name;
-                getStudentByName(database, name); 
+                deleteStudentByName(database, name); 
                 break;
             case 0:
                 std::cout << "Выход из программы.\n";
                 break;
             default:
-                std::cout << "Неверный выбор. Попробуйте снова.\n";
+                std::cout << "Неверный выбор. Попробуйте снова.\n";        
         }
     } while (choice != 0);
 
