@@ -92,6 +92,17 @@ TEST_F(StudentDatabaseTest, displayLatestStudent) {
     EXPECT_NE(output.find("4.2"), std::string::npos);
 }
 
+TEST_F(StudentDatabaseTest, deleteStudentByName) {
+    Student newStudent{"Анна", 22, "Биология", 4.9};
+    addStudent(db, newStudent);
+
+    deleteStudentByName(db, "Анна");
+
+    Student* found = getStudentByName(db, "Анна");
+    EXPECT_EQ(found, nullptr);
+}
+
+
 int main() {
     std::vector<Student> database;
 
