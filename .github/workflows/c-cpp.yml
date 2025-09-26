@@ -13,6 +13,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
+    - name: installation
+      run: sudo apt install -y googletest libgtest-dev build-essential gcovr
     - name: configure
       run: ./configure
     - name: make
