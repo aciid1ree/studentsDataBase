@@ -1,5 +1,16 @@
-all:
-	g++ -std=c++17 -pthread -I/usr/include/gtest -L/usr/lib/x86_64-linux-gnu main.cpp -o program.out -lgtest -lpthread
+CXX = g++
+CXXFLAGS = -std=c++17 -Wall -pthread
+INCLUDES = -I/usr/include/gtest
+LIBS = -L/usr/lib/x86_64-linux-gnu -lgtest -lgtest_main -pthread
+
+SRC_MAIN = main.cpp student.cpp
+SRC_TEST = test_student.cpp student.cpp
+
+program.out: $(SRC_MAIN)
+	$(CXX) $(CXXFLAGS) $(SRC_MAIN) -o program.out
+
+tests: $(SRC_TEST)
+	$(CXX) $(CXXFLAGS) $(SRC_TEST) -o tests $(INCLUDES) $(LIBS)
 
 clean:
-	rm program.out
+	rm -f program.out tests

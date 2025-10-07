@@ -1,0 +1,5 @@
+---
+triple:          'arm64-apple-darwin'
+binary-path:     '/Users/valeria/lab_1_parallelim/studentsDataBase-2/main'
+relocations:     []
+...

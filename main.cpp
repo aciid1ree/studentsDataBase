@@ -1,67 +1,58 @@
 #include <iostream>
 #include <vector>
-#include <string>
-
-struct Student {
-    std::string name;
-    int age;
-    std::string major;
-    double gpa;
-};
-
-// Функция для добавления студента в базу данных
-void addStudent(std::vector<Student>& database) {
-    Student student;
-    std::cout << "Введите имя студента: ";
-    std::cin >> student.name;
-    std::cout << "Введите возраст студента: ";
-    std::cin >> student.age;
-    std::cout << "Введите специальность студента: ";
-    std::cin >> student.major;
-    std::cout << "Введите средний балл студента: ";
-    std::cin >> student.gpa;
-
-    database.push_back(student);
-    std::cout << "Студент добавлен в базу данных.\n";
-}
-
-// Функция для вывода всех студентов из базы данных
-void displayStudents(const std::vector<Student>& database) {
-    std::cout << "Список студентов:\n";
-    for (const Student& student : database) {
-        std::cout << "Имя: " << student.name << "\n";
-        std::cout << "Возраст: " << student.age << "\n";
-        std::cout << "Специальность: " << student.major << "\n";
-        std::cout << "Средний балл: " << student.gpa << "\n\n";
-    }
-}
+#include "student.h"
 
 int main() {
-    std::vector<Student> database;
-
+    StudentDatabase db;
     int choice;
+    std::string name;
+
     do {
         std::cout << "Меню:\n";
         std::cout << "1. Добавить студента\n";
         std::cout << "2. Вывести список студентов\n";
+        std::cout << "3. Вывести последнего добавленного студента\n";
+        std::cout << "4. Найти студента по имени\n";
+        std::cout << "5. Удалить студента\n";
         std::cout << "0. Выход\n";
         std::cout << "Выберите действие: ";
         std::cin >> choice;
 
-        switch (choice) {
-            case 1:
-                addStudent(database);
+        switch(choice) {
+            case 1: {
+                Student s;
+                std::cout << "Введите имя: "; std::cin >> s.name;
+                std::cout << "Введите возраст: "; std::cin >> s.age;
+                std::cout << "Введите специальность: "; std::cin >> s.major;
+                std::cout << "Введите GPA: "; std::cin >> s.gpa;
+                db.addStudent(s);
                 break;
-            case 2:
-                displayStudents(database);
+            }
+            case 2: {
+                for (auto& s : db.getAllStudents()) {
+                    std::cout << s.name << " " << s.age << " " << s.major << " " << s.gpa << "\n";
+                }
                 break;
-            case 0:
-                std::cout << "Выход из программы.\n";
+            }
+            case 3: {
+                const Student* last = db.getLatestStudent();
+                if (last) std::cout << last->name << "\n";
                 break;
-            default:
-                std::cout << "Неверный выбор. Попробуйте снова.\n";
+            }
+            case 4: {
+                std::cout << "Введите имя: "; std::cin >> name;
+                Student* s = db.getStudentByName(name);
+                if (s) std::cout << s->name << "\n";
+                else std::cout << "Не найден\n";
+                break;
+            }
+            case 5: {
+                std::cout << "Введите имя: "; std::cin >> name;
+                db.deleteStudentByName(name);
+                break;
+            }
+            case 0: break;
+            default: std::cout << "Неверный выбор\n";
         }
-    } while (choice != 0);
-
-    return 0;
+    } while(choice != 0);
 }
