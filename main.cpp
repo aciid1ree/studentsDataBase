@@ -9,6 +9,38 @@ struct Student {
     double gpa;
 };
 
+class StudentDatabase {
+    private:
+        std::vector<Student> database;
+    
+    public:
+        void addStudent(const Student& s) {
+            database.push_back(s);
+        }
+    
+        std::vector<Student> getAllStudents() const {
+            return database;
+        }
+    
+        const Student* getLatestStudent() const {
+            if (database.empty()) return nullptr;
+            return &database.back();
+        }
+    
+        Student* getStudentByName(const std::string& name) {
+            auto it = std::find_if(database.begin(), database.end(),
+                                   [&](const Student& s){ return s.name == name; });
+            if (it != database.end()) return &(*it);
+            return nullptr;
+        }
+    
+        void deleteStudentByName(const std::string& name) {
+            database.erase(std::remove_if(database.begin(), database.end(),
+                                          [&](const Student& s){ return s.name == name; }),
+                           database.end());
+        }
+    };
+
 // Функция для добавления студента в базу данных
 void addStudent(std::vector<Student>& database) {
     Student student;
