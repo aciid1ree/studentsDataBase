@@ -16,17 +16,22 @@ jobs:
     - name: Install dependencies
       run: |
         sudo apt update
-        sudo apt install -y build-essential cmake libgtest-dev
+        sudo apt install -y build-essential cmake libgtest-dev lcov
 
     - name: Build GoogleTest
       run: |
-        cd /usr/src/googletest
-        sudo cmake -S . -B build
-        sudo cmake --build build
-        sudo cp build/lib/*.a /usr/lib
+        cd /usr/src/gtest
+        sudo cmake .
+        sudo make
+        sudo cp *.a /usr/lib
 
-    - name: Build project
+    - name: Clean old binaries
+      run: rm -f tests program.out
+
+    - name: Build main program
       run: make
 
-    - name: Run tests
-      run: ./tests   # запуск тестов GoogleTest
+    - name: Build and run tests
+      run: |
+        g++ -fprofile-arcs -ftest-coverage -std=c++17 -pthread main.cpp student.cpp test_student.cpp -lgtest -lgtest_main -o tests
+        ./tests
