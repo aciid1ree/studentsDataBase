@@ -12,7 +12,6 @@ protected:
     }
 };
 
-// 1. Проверка добавления студента
 TEST_F(StudentDatabaseTest, AddStudent) {
     db.addStudent({"Анна", 22, "Биология", 4.9});
     auto students = db.getAllStudents();
@@ -21,14 +20,12 @@ TEST_F(StudentDatabaseTest, AddStudent) {
     EXPECT_DOUBLE_EQ(students.back().gpa, 4.9);
 }
 
-// 2. Проверка получения последнего студента
 TEST_F(StudentDatabaseTest, GetLatestStudent) {
     const Student* last = db.getLatestStudent();
     ASSERT_NE(last, nullptr);
     EXPECT_EQ(last->name, "Петр");
 }
 
-// 3. Проверка поиска студента по имени
 TEST_F(StudentDatabaseTest, GetStudentByName) {
     Student* s = db.getStudentByName("Мария");
     ASSERT_NE(s, nullptr);
@@ -38,7 +35,6 @@ TEST_F(StudentDatabaseTest, GetStudentByName) {
     EXPECT_EQ(notFound, nullptr);
 }
 
-// 4. Проверка удаления студента
 TEST_F(StudentDatabaseTest, DeleteStudentByName) {
     db.deleteStudentByName("Мария");
     Student* s = db.getStudentByName("Мария");
@@ -46,7 +42,6 @@ TEST_F(StudentDatabaseTest, DeleteStudentByName) {
     EXPECT_EQ(db.getAllStudents().size(), 2);
 }
 
-// 5. Проверка возвращаемого списка студентов
 TEST_F(StudentDatabaseTest, GetAllStudents) {
     auto students = db.getAllStudents();
     ASSERT_EQ(students.size(), 3);
@@ -55,7 +50,6 @@ TEST_F(StudentDatabaseTest, GetAllStudents) {
     EXPECT_EQ(students[2].name, "Петр");
 }
 
-// 6. Проверка работы с пустой базой
 TEST(StudentDatabaseEdgeCase, EmptyDatabase) {
     StudentDatabase emptyDb;
     EXPECT_EQ(emptyDb.getAllStudents().size(), 0);
