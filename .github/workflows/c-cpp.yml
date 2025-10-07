@@ -20,7 +20,10 @@ jobs:
 
     - name: Build GoogleTest
       run: |
-        cd /usr/src/googletest sudo cmake -S . -B build sudo cmake --build build sudo cp build/lib/*.a /usr/lib
+        cd /usr/src/googletest
+        sudo cmake -S . -B build
+        sudo cmake --build build 
+        sudo cp build/lib/*.a /usr/lib
 
     - name: Clean old binaries
       run: rm -f tests program.out
