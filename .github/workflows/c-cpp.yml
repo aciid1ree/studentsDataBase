@@ -29,9 +29,7 @@ jobs:
       run: rm -f tests program.out
 
     - name: Build main program
-      run: make
+      run: make program.out
 
     - name: Build and run tests
-      run: |
-        g++ -fprofile-arcs -ftest-coverage -std=c++17 -pthread main.cpp student.cpp test_student.cpp -lgtest -lgtest_main -o tests
-        ./tests
+      run: make tests && ./tests
